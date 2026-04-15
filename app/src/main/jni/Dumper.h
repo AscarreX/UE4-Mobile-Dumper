@@ -222,8 +222,12 @@ void DumpBones(std::string out) {
 
         uintptr_t Sockets = Read<uintptr_t>(Skeleton + 0x190); // SkeletalMeshSocket*[] Sockets; - Class: Skeleton.Object
 
-        for (int x = 0; x < 128; x++) {
-            uintptr_t Socket = Read<uintptr_t>(Sockets + (x * sizeof(uintptr_t)));
+        int32_t SocketCount = Read<int32_t>(Skeleton + 0x198); // As Sockets is a TArray it has the count 8 byes from the data so (Sockets + 0x8)
+
+        Dump << SocketCount << " bones found in total" << "\n\n";
+
+        for (int x = 0; x < SocketCount; x++) {
+            uintptr_t Socket = Read<uintptr_t>(Sockets + (x * Offsets::PointerSize));
 
             uintptr_t SocketNameIndex = Read<uintptr_t>(Socket + 0x28); // FName SocketName; - Class: SkeletalMeshSocket.Object
             std::string SocketName = GetNameFromFName(SocketNameIndex);
